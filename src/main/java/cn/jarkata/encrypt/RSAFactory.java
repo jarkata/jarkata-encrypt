@@ -1,4 +1,4 @@
-package cn.jarkata.encrypt.utils;
+package cn.jarkata.encrypt;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,6 @@ public class RSAFactory {
     public static final String ALGORITHM_RSA = "RSA";
     public static final String PUBLIC_KEY = "PUBLIC_KEY";
     public static final String PRIVATE_KEY = "PRIVATE_KEY";
-    private static final Map<String, Key> dataMap = new HashMap<>();
 
     public static Map<String, Key> init(int keySize) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM_RSA);
@@ -23,11 +22,22 @@ public class RSAFactory {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-
+        Map<String, Key> dataMap = new HashMap<>();
         dataMap.put(PUBLIC_KEY, publicKey);
         dataMap.put(PRIVATE_KEY, privateKey);
         return dataMap;
     }
+
+    public static String getPublicKey(Map<String, Key> dataMap) {
+        RSAPublicKey publicKey = (RSAPublicKey) dataMap.get(PUBLIC_KEY);
+        return BASE64.encodeBase64(publicKey.getEncoded());
+    }
+
+    public static String getPrivateKey(Map<String, Key> dataMap) {
+        RSAPrivateKey privateKey = (RSAPrivateKey) dataMap.get(PRIVATE_KEY);
+        return BASE64.encodeBase64(privateKey.getEncoded());
+    }
+
 
     public static PublicKey getPublicKey(RSAPublicKey publicKey) throws Exception {
         X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKey.getEncoded());
@@ -35,8 +45,31 @@ public class RSAFactory {
         return keyFactory.generatePublic(encodedKeySpec);
     }
 
+    public static PublicKey getPublicKey(byte[] publicKeyData) throws Exception {
+        X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKeyData);
+        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
+        return keyFactory.generatePublic(encodedKeySpec);
+    }
+
+    public PublicKey genPublicKey(String publicData) throws Exception {
+        byte[] decodeBase64 = BASE64.decodeBase64(publicData);
+        return getPublicKey(decodeBase64);
+    }
+
+    public PrivateKey getPrivateKey(String privateKeyData) throws Exception {
+        byte[] decodeBase64 = BASE64.decodeBase64(privateKeyData);
+        return getPrivateKey(decodeBase64);
+    }
+
+
     public static PrivateKey getPrivateKey(RSAPrivateKey privateKey) throws Exception {
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
+        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
+        return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+    }
+
+    public static PrivateKey getPrivateKey(byte[] privateKeyData) throws Exception {
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyData);
         KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
         return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
     }

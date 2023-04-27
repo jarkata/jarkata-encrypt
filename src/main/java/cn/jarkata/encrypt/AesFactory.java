@@ -1,4 +1,4 @@
-package cn.jarkata.encrypt.utils;
+package cn.jarkata.encrypt;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
