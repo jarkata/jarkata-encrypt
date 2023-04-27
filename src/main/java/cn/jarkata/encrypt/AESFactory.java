@@ -43,6 +43,14 @@ public class AESFactory {
         return instance.doFinal(data.getBytes(StandardCharsets.UTF_8));
     }
 
+    public static byte[] encrypt(String password, byte[] data) throws Exception {
+        //加密
+        SecretKeySpec secretKeySpec = new SecretKeySpec(password.getBytes(StandardCharsets.UTF_8), "AES");
+        Cipher instance = Cipher.getInstance(TRANSFORMATION);
+        instance.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        return instance.doFinal(data);
+    }
+
     public static byte[] decrypt(String password, byte[] encrypt) throws Exception {
         //解密
         SecretKeySpec secretKeySpec = new SecretKeySpec(password.getBytes(StandardCharsets.UTF_8), "AES");
