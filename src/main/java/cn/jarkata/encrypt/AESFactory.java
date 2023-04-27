@@ -7,7 +7,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-public class AesFactory {
+public class AESFactory {
 
     public static final String ALGORITHM_AES = "AES";
     public static final String TRANSFORMATION = "AES";
