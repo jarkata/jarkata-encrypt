@@ -16,16 +16,20 @@ public class RSAFactoryTest {
     @Test
     public void init() throws Exception {
         Map<String, Key> keyMap = RSAFactory.init(1024);
-        RSAPublicKey key = (RSAPublicKey) keyMap.get(RSAFactory.PUBLIC_KEY);
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) keyMap.get(RSAFactory.PUBLIC_KEY);
         RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyMap.get(RSAFactory.PRIVATE_KEY);
-        PublicKey publicKey = RSAFactory.getPublicKey(key);
 
-        byte[] publicKeyEncoded = publicKey.getEncoded();
+        byte[] publicKeyEncoded = rsaPublicKey.getEncoded();
         Base64.Encoder encoder = Base64.getEncoder();
         System.out.println("PUB:" + encoder.encodeToString(publicKeyEncoded));
         byte[] privateKeyEncoded = rsaPrivateKey.getEncoded();
-        System.out.println("PRI:" + encoder.encodeToString(privateKeyEncoded));
+        String privateEncode = encoder.encodeToString(privateKeyEncoded);
+        System.out.println("PRI:" + privateEncode);
 
+        PrivateKey privateKey1 = RSAFactory.getPrivateKey(privateEncode);
+        System.out.println(privateKey1);
+
+        PublicKey publicKey = RSAFactory.getPublicKey(rsaPublicKey);
         byte[] encrypt = RSAFactory.encrypt(publicKey, "test");
 
         PrivateKey privateKey = RSAFactory.getPrivateKey(rsaPrivateKey);
