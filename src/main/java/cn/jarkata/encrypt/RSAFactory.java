@@ -51,12 +51,12 @@ public class RSAFactory {
         return keyFactory.generatePublic(encodedKeySpec);
     }
 
-    public PublicKey genPublicKey(String publicData) throws Exception {
+    public static PublicKey genPublicKey(String publicData) throws Exception {
         byte[] decodeBase64 = BASE64.decodeBase64(publicData);
         return getPublicKey(decodeBase64);
     }
 
-    public PrivateKey getPrivateKey(String privateKeyData) throws Exception {
+    public static PrivateKey getPrivateKey(String privateKeyData) throws Exception {
         byte[] decodeBase64 = BASE64.decodeBase64(privateKeyData);
         return getPrivateKey(decodeBase64);
     }
