@@ -3,7 +3,7 @@ package cn.jarkata.encrypt;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class BASE64 {
+public class JetBase64 {
 
     private static final Base64.Encoder encoder = Base64.getEncoder();
     private static final Base64.Decoder decoder = Base64.getDecoder();

@@ -30,12 +30,12 @@ public class RSAFactory {
 
     public static String getPublicKey(Map<String, Key> dataMap) {
         RSAPublicKey publicKey = (RSAPublicKey) dataMap.get(PUBLIC_KEY);
-        return BASE64.encodeBase64(publicKey.getEncoded());
+        return JetBase64.encodeBase64(publicKey.getEncoded());
     }
 
     public static String getPrivateKey(Map<String, Key> dataMap) {
         RSAPrivateKey privateKey = (RSAPrivateKey) dataMap.get(PRIVATE_KEY);
-        return BASE64.encodeBase64(privateKey.getEncoded());
+        return JetBase64.encodeBase64(privateKey.getEncoded());
     }
 
 
@@ -52,12 +52,12 @@ public class RSAFactory {
     }
 
     public static PublicKey genPublicKey(String publicData) throws Exception {
-        byte[] decodeBase64 = BASE64.decodeBase64(publicData);
+        byte[] decodeBase64 = JetBase64.decodeBase64(publicData);
         return getPublicKey(decodeBase64);
     }
 
     public static PrivateKey getPrivateKey(String privateKeyData) throws Exception {
-        byte[] decodeBase64 = BASE64.decodeBase64(privateKeyData);
+        byte[] decodeBase64 = JetBase64.decodeBase64(privateKeyData);
         return getPrivateKey(decodeBase64);
     }
 
