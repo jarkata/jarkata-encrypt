@@ -1,6 +1,7 @@
 package cn.jarkata.encrypt;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -71,6 +72,28 @@ public class RsaFactory {
     }
 
     /**
+     * 公钥加密数据，并返回Base64编码的数据
+     *
+     * @param publicKey 公钥
+     * @param data      明文
+     * @return 密文数据
+     */
+    public static String encryptToString(PublicKey publicKey, String data) throws Exception {
+        return JetBase64.encodeBase64(encrypt(publicKey, data.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
+     * 加密数据，并返回Base64编码的数据
+     *
+     * @param privateKey 私钥
+     * @param data       明文数据
+     * @return 密文
+     */
+    public static String encryptToString(PrivateKey privateKey, String data) throws Exception {
+        return JetBase64.encodeBase64(encrypt(privateKey, data.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
      * 使用公钥加密
      *
      * @param publicKey 公钥
@@ -96,6 +119,29 @@ public class RsaFactory {
         Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
         instance.init(Cipher.ENCRYPT_MODE, privateKey);
         return instance.doFinal(data);
+    }
+
+    /**
+     * 根据私钥解密数据
+     *
+     * @param privateKey 私钥
+     * @param data       密文数据
+     * @return 明文数据
+     */
+    public static String decryptToString(PrivateKey privateKey, String data) throws Exception {
+        final byte[] decodeBase64 = JetBase64.decodeBase64(data);
+        return new String(decrypt(privateKey, decodeBase64), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 根据公钥解密数据
+     *
+     * @param publicKey 公钥
+     * @param data      密文
+     * @return 明文数据
+     */
+    public static String decryptToString(PublicKey publicKey, String data) throws Exception {
+        return new String(decrypt(publicKey, JetBase64.decodeBase64(data)), StandardCharsets.UTF_8);
     }
 
     /**
