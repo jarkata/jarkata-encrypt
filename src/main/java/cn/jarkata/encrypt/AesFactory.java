@@ -9,11 +9,27 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
+/**
+ * Aes算法加密的工具类
+ */
 public class AesFactory {
 
+    /**
+     * 算法常量
+     */
     public static final String ALGORITHM_AES = "AES";
+    /**
+     * 算法常量
+     */
     public static final String TRANSFORMATION = "AES";//"AES_256/CBC/NoPadding";
 
+    /**
+     * 生成安全密钥
+     *
+     * @param seeds 随机因子
+     * @return 安全密钥
+     * @throws Exception 生成安全密钥失败时的异常
+     */
     public static SecretKeySpec genSecretKey(String seeds) throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM_AES);
         keyGenerator.init(128, new SecureRandom(seeds.getBytes(StandardCharsets.UTF_8)));
@@ -36,12 +52,27 @@ public class AesFactory {
         return instance.doFinal(encrypt);
     }
 
-
+    /**
+     * 加密数据，并返回Base64的字符串
+     *
+     * @param password 密码
+     * @param data     明文数据
+     * @return 密文数据
+     * @throws Exception 加密发生异常时抛出的异常
+     */
     public static String encryptToString(String password, String data) throws Exception {
         final byte[] encrypt = simpleEncrypt(password, data.getBytes(StandardCharsets.UTF_8));
         return JetBase64.encodeBase64(encrypt);
     }
 
+    /**
+     * 解密数据，并返回明文字符串
+     *
+     * @param password 密码
+     * @param data     密文数据
+     * @return 明文数据
+     * @throws Exception 解密失败时抛出异常
+     */
     public static String decryptToString(String password, String data) throws Exception {
         final byte[] base64 = JetBase64.decodeBase64(data);
         final byte[] decrypt = simpleDecrypt(password, base64);
@@ -83,6 +114,12 @@ public class AesFactory {
         return instance.doFinal(encrypt);
     }
 
+    /**
+     * 确保密码长度达32位
+     *
+     * @param password 密码
+     * @return 32位密码
+     */
     private static String wrapPassword(String password) {
         return StringUtils.leftPad(password, 32, "0");
     }

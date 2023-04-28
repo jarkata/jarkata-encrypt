@@ -30,7 +30,7 @@ public class RsaFactoryTest {
         System.out.println(privateKey1);
 
         PublicKey publicKey = RsaFactory.getPublicKey(rsaPublicKey);
-        byte[] encrypt = RsaFactory.encrypt(publicKey, "test");
+        byte[] encrypt = RsaFactory.encrypt(publicKey, "test".getBytes(StandardCharsets.UTF_8));
 
         PrivateKey privateKey = RsaFactory.getPrivateKey(rsaPrivateKey);
 
@@ -38,7 +38,7 @@ public class RsaFactoryTest {
         System.out.println(new String(decrypt, StandardCharsets.UTF_8));
 
 
-        byte[] encrypt1 = RsaFactory.encrypt(privateKey, "test141234");
+        byte[] encrypt1 = RsaFactory.encrypt(privateKey, "test141234".getBytes(StandardCharsets.UTF_8));
 
         byte[] decrypt2 = RsaFactory.decrypt(publicKey, encrypt1);
         System.out.println("PUB:" + new String(decrypt2, StandardCharsets.UTF_8));

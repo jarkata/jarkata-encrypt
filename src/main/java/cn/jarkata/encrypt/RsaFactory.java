@@ -1,7 +1,6 @@
 package cn.jarkata.encrypt;
 
 import javax.crypto.Cipher;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -38,12 +37,16 @@ public class RsaFactory {
         return JetBase64.encodeBase64(privateKey.getEncoded());
     }
 
-
     public static PublicKey getPublicKey(RSAPublicKey publicKey) throws Exception {
-        X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKey.getEncoded());
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
-        return keyFactory.generatePublic(encodedKeySpec);
+        return getPublicKey(publicKey.getEncoded());
     }
+
+
+    public static PublicKey genPublicKey(String publicData) throws Exception {
+        byte[] decodeBase64 = JetBase64.decodeBase64(publicData);
+        return getPublicKey(decodeBase64);
+    }
+
 
     public static PublicKey getPublicKey(byte[] publicKeyData) throws Exception {
         X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKeyData);
@@ -51,21 +54,14 @@ public class RsaFactory {
         return keyFactory.generatePublic(encodedKeySpec);
     }
 
-    public static PublicKey genPublicKey(String publicData) throws Exception {
-        byte[] decodeBase64 = JetBase64.decodeBase64(publicData);
-        return getPublicKey(decodeBase64);
-    }
 
     public static PrivateKey getPrivateKey(String privateKeyData) throws Exception {
         byte[] decodeBase64 = JetBase64.decodeBase64(privateKeyData);
         return getPrivateKey(decodeBase64);
     }
 
-
     public static PrivateKey getPrivateKey(RSAPrivateKey privateKey) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
-        return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        return getPrivateKey(privateKey.getEncoded());
     }
 
     public static PrivateKey getPrivateKey(byte[] privateKeyData) throws Exception {
@@ -74,29 +70,59 @@ public class RsaFactory {
         return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
     }
 
-    public static byte[] encrypt(PublicKey publicKey, String data) throws Exception {
+    /**
+     * 使用公钥加密
+     *
+     * @param publicKey 公钥
+     * @param data      被加密数据
+     * @return 密文数据
+     * @throws Exception 加密时发生异常
+     */
+    public static byte[] encrypt(PublicKey publicKey, byte[] data) throws Exception {
         Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
         instance.init(Cipher.ENCRYPT_MODE, publicKey);
-        return instance.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return instance.doFinal(data);
     }
 
-    public static byte[] encrypt(PrivateKey privateKey, String data) throws Exception {
+    /**
+     * 使用私钥加密数据
+     *
+     * @param privateKey 私钥
+     * @param data       明文数据
+     * @return 密文数据
+     * @throws Exception 加密发生异常
+     */
+    public static byte[] encrypt(PrivateKey privateKey, byte[] data) throws Exception {
         Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
         instance.init(Cipher.ENCRYPT_MODE, privateKey);
-        return instance.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return instance.doFinal(data);
     }
 
-
+    /**
+     * 使用私钥解密数据
+     *
+     * @param privateKey 私钥
+     * @param data       密文数据
+     * @return 明文数据
+     * @throws Exception 解密发生异常
+     */
     public static byte[] decrypt(PrivateKey privateKey, byte[] data) throws Exception {
         Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
         instance.init(Cipher.DECRYPT_MODE, privateKey);
         return instance.doFinal(data);
     }
 
-
-    public static byte[] decrypt(PublicKey privateKey, byte[] data) throws Exception {
+    /**
+     * 使用公钥解密数据
+     *
+     * @param publicKey 公钥
+     * @param data      密文数据
+     * @return 明文数据
+     * @throws Exception 解密发生异常
+     */
+    public static byte[] decrypt(PublicKey publicKey, byte[] data) throws Exception {
         Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
-        instance.init(Cipher.DECRYPT_MODE, privateKey);
+        instance.init(Cipher.DECRYPT_MODE, publicKey);
         return instance.doFinal(data);
     }
 
