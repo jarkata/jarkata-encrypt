@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-public class AESFactory {
+public class AesFactory {
 
     public static final String ALGORITHM_AES = "AES";
     public static final String TRANSFORMATION = "AES";//"AES_256/CBC/NoPadding";

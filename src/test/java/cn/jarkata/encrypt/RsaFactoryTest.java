@@ -11,13 +11,13 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 import java.util.Map;
 
-public class RSAFactoryTest {
+public class RsaFactoryTest {
 
     @Test
     public void init() throws Exception {
-        Map<String, Key> keyMap = RSAFactory.init(1024);
-        RSAPublicKey rsaPublicKey = (RSAPublicKey) keyMap.get(RSAFactory.PUBLIC_KEY);
-        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyMap.get(RSAFactory.PRIVATE_KEY);
+        Map<String, Key> keyMap = RsaFactory.init(1024);
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) keyMap.get(RsaFactory.PUBLIC_KEY);
+        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyMap.get(RsaFactory.PRIVATE_KEY);
 
         byte[] publicKeyEncoded = rsaPublicKey.getEncoded();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -26,21 +26,21 @@ public class RSAFactoryTest {
         String privateEncode = encoder.encodeToString(privateKeyEncoded);
         System.out.println("PRI:" + privateEncode);
 
-        PrivateKey privateKey1 = RSAFactory.getPrivateKey(privateEncode);
+        PrivateKey privateKey1 = RsaFactory.getPrivateKey(privateEncode);
         System.out.println(privateKey1);
 
-        PublicKey publicKey = RSAFactory.getPublicKey(rsaPublicKey);
-        byte[] encrypt = RSAFactory.encrypt(publicKey, "test");
+        PublicKey publicKey = RsaFactory.getPublicKey(rsaPublicKey);
+        byte[] encrypt = RsaFactory.encrypt(publicKey, "test");
 
-        PrivateKey privateKey = RSAFactory.getPrivateKey(rsaPrivateKey);
+        PrivateKey privateKey = RsaFactory.getPrivateKey(rsaPrivateKey);
 
-        byte[] decrypt = RSAFactory.decrypt(RSAFactory.getPrivateKey(rsaPrivateKey), encrypt);
+        byte[] decrypt = RsaFactory.decrypt(RsaFactory.getPrivateKey(rsaPrivateKey), encrypt);
         System.out.println(new String(decrypt, StandardCharsets.UTF_8));
 
 
-        byte[] encrypt1 = RSAFactory.encrypt(privateKey, "test141234");
+        byte[] encrypt1 = RsaFactory.encrypt(privateKey, "test141234");
 
-        byte[] decrypt2 = RSAFactory.decrypt(publicKey, encrypt1);
+        byte[] decrypt2 = RsaFactory.decrypt(publicKey, encrypt1);
         System.out.println("PUB:" + new String(decrypt2, StandardCharsets.UTF_8));
     }
 

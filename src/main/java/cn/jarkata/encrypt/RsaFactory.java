@@ -10,7 +10,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RSAFactory {
+public class RsaFactory {
 
     public static final String ALGORITHM_RSA = "RSA";
     public static final String PUBLIC_KEY = "PUBLIC_KEY";
