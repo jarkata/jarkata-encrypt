@@ -1,5 +1,6 @@
 package cn.jarkata.encrypt;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -11,8 +12,15 @@ import java.nio.file.StandardOpenOption;
 public class AesFactoryTest {
 
     @Test
+    public void testGenSecretKey() {
+        String secretKey = AesFactory.genSecretKey("test");
+        System.out.println(secretKey);
+        Assert.assertNotNull(secretKey);
+    }
+
+    @Test
     public void encrypt() throws Exception {
-        SecretKeySpec secretKeySpec = AesFactory.genSecretKey("1234");
+        SecretKeySpec secretKeySpec = AesFactory.genSecretKeySpec("1234");
         byte[] encrypt = AesFactory.simpleEncrypt(secretKeySpec, "testtesttesttest");
         byte[] decrypt = AesFactory.simpleDecrypt(secretKeySpec, encrypt);
         System.out.println(new String(decrypt, StandardCharsets.UTF_8));

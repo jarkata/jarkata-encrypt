@@ -1,5 +1,7 @@
 package cn.jarkata.encrypt;
 
+import cn.jarkata.commons.utils.StringUtils;
+
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -9,6 +11,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RsaFactory {
 
@@ -30,45 +33,64 @@ public class RsaFactory {
 
     public static String getPublicKey(Map<String, Key> dataMap) {
         RSAPublicKey publicKey = (RSAPublicKey) dataMap.get(PUBLIC_KEY);
-        return JetBase64.encodeBase64(publicKey.getEncoded());
+        return JaBase64.encodeBase64(publicKey.getEncoded());
     }
 
     public static String getPrivateKey(Map<String, Key> dataMap) {
         RSAPrivateKey privateKey = (RSAPrivateKey) dataMap.get(PRIVATE_KEY);
-        return JetBase64.encodeBase64(privateKey.getEncoded());
+        return JaBase64.encodeBase64(privateKey.getEncoded());
     }
 
-    public static PublicKey getPublicKey(RSAPublicKey publicKey) throws Exception {
+    public static PublicKey getPublicKey(RSAPublicKey publicKey) {
+        Objects.requireNonNull(publicKey, "RSAPublicKey Null");
         return getPublicKey(publicKey.getEncoded());
     }
 
 
-    public static PublicKey genPublicKey(String publicData) throws Exception {
-        byte[] decodeBase64 = JetBase64.decodeBase64(publicData);
+    public static PublicKey genPublicKey(String publicData) {
+        byte[] decodeBase64 = JaBase64.decodeBase64(publicData);
         return getPublicKey(decodeBase64);
     }
 
 
-    public static PublicKey getPublicKey(byte[] publicKeyData) throws Exception {
-        X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKeyData);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
-        return keyFactory.generatePublic(encodedKeySpec);
+    public static PublicKey getPublicKey(byte[] publicKeyData) {
+        try {
+            X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKeyData);
+            KeyFactory keyFactory = getKeyFactoryInstance();
+            return keyFactory.generatePublic(encodedKeySpec);
+        } catch (Exception ex) {
+            throw new RuntimeException("Get PublicKey Error:", ex);
+        }
     }
 
 
-    public static PrivateKey getPrivateKey(String privateKeyData) throws Exception {
-        byte[] decodeBase64 = JetBase64.decodeBase64(privateKeyData);
+    public static PrivateKey getPrivateKey(String privateKeyData) {
+        byte[] decodeBase64 = JaBase64.decodeBase64(privateKeyData);
         return getPrivateKey(decodeBase64);
     }
 
-    public static PrivateKey getPrivateKey(RSAPrivateKey privateKey) throws Exception {
+    public static PrivateKey getPrivateKey(RSAPrivateKey privateKey) {
+        Objects.requireNonNull(privateKey, "RSAPrivateKey Null");
         return getPrivateKey(privateKey.getEncoded());
     }
 
-    public static PrivateKey getPrivateKey(byte[] privateKeyData) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyData);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
-        return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+    public static PrivateKey getPrivateKey(byte[] privateKeyData) {
+        Objects.requireNonNull(privateKeyData, "PrivateKeyData Null");
+        try {
+            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyData);
+            KeyFactory keyFactory = getKeyFactoryInstance();
+            return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        } catch (Exception ex) {
+            throw new RuntimeException("Get PrivateKey Error:", ex);
+        }
+    }
+
+    private static KeyFactory getKeyFactoryInstance() {
+        try {
+            return KeyFactory.getInstance(ALGORITHM_RSA);
+        } catch (Exception ex) {
+            throw new RuntimeException("Get KeyFactory Error:", ex);
+        }
     }
 
     /**
@@ -78,8 +100,11 @@ public class RsaFactory {
      * @param data      明文
      * @return 密文数据
      */
-    public static String encryptToString(PublicKey publicKey, String data) throws Exception {
-        return JetBase64.encodeBase64(encrypt(publicKey, data.getBytes(StandardCharsets.UTF_8)));
+    public static String encryptToString(PublicKey publicKey, String data) {
+        if (Objects.isNull(publicKey) || StringUtils.isBlank(data)) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        return JaBase64.encodeBase64(encrypt(publicKey, data.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -89,8 +114,11 @@ public class RsaFactory {
      * @param data       明文数据
      * @return 密文
      */
-    public static String encryptToString(PrivateKey privateKey, String data) throws Exception {
-        return JetBase64.encodeBase64(encrypt(privateKey, data.getBytes(StandardCharsets.UTF_8)));
+    public static String encryptToString(PrivateKey privateKey, String data) {
+        if (Objects.isNull(privateKey) || StringUtils.isBlank(data)) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        return JaBase64.encodeBase64(encrypt(privateKey, data.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -99,12 +127,18 @@ public class RsaFactory {
      * @param publicKey 公钥
      * @param data      被加密数据
      * @return 密文数据
-     * @throws Exception 加密时发生异常
      */
-    public static byte[] encrypt(PublicKey publicKey, byte[] data) throws Exception {
-        Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
-        instance.init(Cipher.ENCRYPT_MODE, publicKey);
-        return instance.doFinal(data);
+    public static byte[] encrypt(PublicKey publicKey, byte[] data) {
+        if (Objects.isNull(publicKey) || Objects.isNull(data) || data.length == 0) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        try {
+            Cipher instance = getCipherInstance();
+            instance.init(Cipher.ENCRYPT_MODE, publicKey);
+            return instance.doFinal(data);
+        } catch (Exception ex) {
+            throw new RuntimeException("Using PublicKey Encrypt Error:", ex);
+        }
     }
 
     /**
@@ -113,12 +147,18 @@ public class RsaFactory {
      * @param privateKey 私钥
      * @param data       明文数据
      * @return 密文数据
-     * @throws Exception 加密发生异常
      */
-    public static byte[] encrypt(PrivateKey privateKey, byte[] data) throws Exception {
-        Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
-        instance.init(Cipher.ENCRYPT_MODE, privateKey);
-        return instance.doFinal(data);
+    public static byte[] encrypt(PrivateKey privateKey, byte[] data) {
+        if (Objects.isNull(privateKey) || Objects.isNull(data) || data.length == 0) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        try {
+            Cipher instance = getCipherInstance();
+            instance.init(Cipher.ENCRYPT_MODE, privateKey);
+            return instance.doFinal(data);
+        } catch (Exception ex) {
+            throw new RuntimeException("Using PrivateKey Encrypt Error:", ex);
+        }
     }
 
     /**
@@ -128,8 +168,11 @@ public class RsaFactory {
      * @param data       密文数据
      * @return 明文数据
      */
-    public static String decryptToString(PrivateKey privateKey, String data) throws Exception {
-        final byte[] decodeBase64 = JetBase64.decodeBase64(data);
+    public static String decryptToString(PrivateKey privateKey, String data) {
+        if (Objects.isNull(privateKey) || StringUtils.isBlank(data)) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        final byte[] decodeBase64 = JaBase64.decodeBase64(data);
         return new String(decrypt(privateKey, decodeBase64), StandardCharsets.UTF_8);
     }
 
@@ -140,8 +183,8 @@ public class RsaFactory {
      * @param data      密文
      * @return 明文数据
      */
-    public static String decryptToString(PublicKey publicKey, String data) throws Exception {
-        return new String(decrypt(publicKey, JetBase64.decodeBase64(data)), StandardCharsets.UTF_8);
+    public static String decryptToString(PublicKey publicKey, String data) {
+        return new String(decrypt(publicKey, JaBase64.decodeBase64(data)), StandardCharsets.UTF_8);
     }
 
     /**
@@ -150,12 +193,18 @@ public class RsaFactory {
      * @param privateKey 私钥
      * @param data       密文数据
      * @return 明文数据
-     * @throws Exception 解密发生异常
      */
-    public static byte[] decrypt(PrivateKey privateKey, byte[] data) throws Exception {
-        Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
-        instance.init(Cipher.DECRYPT_MODE, privateKey);
-        return instance.doFinal(data);
+    public static byte[] decrypt(PrivateKey privateKey, byte[] data) {
+        if (Objects.isNull(privateKey) || Objects.isNull(data) || data.length == 0) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        try {
+            Cipher instance = getCipherInstance();
+            instance.init(Cipher.DECRYPT_MODE, privateKey);
+            return instance.doFinal(data);
+        } catch (Exception ex) {
+            throw new RuntimeException("Decrypt Error:", ex);
+        }
     }
 
     /**
@@ -164,12 +213,26 @@ public class RsaFactory {
      * @param publicKey 公钥
      * @param data      密文数据
      * @return 明文数据
-     * @throws Exception 解密发生异常
      */
-    public static byte[] decrypt(PublicKey publicKey, byte[] data) throws Exception {
-        Cipher instance = Cipher.getInstance(ALGORITHM_RSA);
-        instance.init(Cipher.DECRYPT_MODE, publicKey);
-        return instance.doFinal(data);
+    public static byte[] decrypt(PublicKey publicKey, byte[] data) {
+        if (Objects.isNull(publicKey) || Objects.isNull(data) || data.length == 0) {
+            throw new IllegalArgumentException("Param Null");
+        }
+        try {
+            Cipher instance = getCipherInstance();
+            instance.init(Cipher.DECRYPT_MODE, publicKey);
+            return instance.doFinal(data);
+        } catch (Exception ex) {
+            throw new RuntimeException("Decrypt Error:", ex);
+        }
+    }
+
+    private static Cipher getCipherInstance() {
+        try {
+            return Cipher.getInstance(ALGORITHM_RSA);
+        } catch (Exception ex) {
+            throw new RuntimeException("Get Cipher Error:", ex);
+        }
     }
 
 

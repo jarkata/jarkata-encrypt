@@ -45,7 +45,15 @@ public class RsaFactoryTest {
     }
 
     @Test
-    public void testInit() {
+    public void testInit() throws Exception {
+        Map<String, Key> keyMap = RsaFactory.init(1024);
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) keyMap.get(RsaFactory.PUBLIC_KEY);
+        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyMap.get(RsaFactory.PRIVATE_KEY);
+        byte[] privateKeyEncoded = rsaPrivateKey.getEncoded();
+        System.out.println(privateKeyEncoded.length);
+        System.out.println(JaHex.encodeHex(privateKeyEncoded).length());
+        System.out.println("======");
+        System.out.println(JaBase64.encodeBase64(privateKeyEncoded).length());
     }
 
     @Test
