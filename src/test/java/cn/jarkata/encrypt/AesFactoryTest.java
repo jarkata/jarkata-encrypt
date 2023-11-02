@@ -14,7 +14,7 @@ public class AesFactoryTest {
     @Test
     public void testGenSecretKey() {
         String secretKey = AesFactory.genSecretKey("test");
-        System.out.println(secretKey);
+        System.out.println(secretKey.length());
         Assert.assertNotNull(secretKey);
     }
 
