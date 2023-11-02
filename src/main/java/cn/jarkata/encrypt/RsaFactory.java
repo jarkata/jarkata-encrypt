@@ -13,12 +13,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * RSA算法工厂类
+ */
 public class RsaFactory {
 
+    /**
+     * 算法名称
+     */
     public static final String ALGORITHM_RSA = "RSA";
+    /**
+     * 公钥Key值常量
+     */
     public static final String PUBLIC_KEY = "PUBLIC_KEY";
+    /**
+     * 私钥Key值常量
+     */
     public static final String PRIVATE_KEY = "PRIVATE_KEY";
 
+    /**
+     * 初始化密钥对
+     *
+     * @param keySize 密钥长度
+     * @return 公私钥对
+     * @throws Exception 初始化密钥失败时发生
+     */
     public static Map<String, Key> init(int keySize) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM_RSA);
         keyPairGenerator.initialize(keySize);
@@ -31,28 +50,58 @@ public class RsaFactory {
         return dataMap;
     }
 
+    /**
+     * 获取公钥
+     *
+     * @param dataMap 初始化密钥Map
+     * @return 公钥字符串，Base64编码
+     */
     public static String getPublicKey(Map<String, Key> dataMap) {
         RSAPublicKey publicKey = (RSAPublicKey) dataMap.get(PUBLIC_KEY);
         return JaBase64.encodeBase64(publicKey.getEncoded());
     }
 
+    /**
+     * 私钥字符串
+     *
+     * @param dataMap 初始化密钥Map
+     * @return 私钥字符串，Base64编码
+     */
     public static String getPrivateKey(Map<String, Key> dataMap) {
         RSAPrivateKey privateKey = (RSAPrivateKey) dataMap.get(PRIVATE_KEY);
         return JaBase64.encodeBase64(privateKey.getEncoded());
     }
 
+    /**
+     * 公钥对象
+     *
+     * @param publicKey 公钥对象
+     * @return 公钥对象
+     */
     public static PublicKey getPublicKey(RSAPublicKey publicKey) {
         Objects.requireNonNull(publicKey, "RSAPublicKey Null");
         return getPublicKey(publicKey.getEncoded());
     }
 
 
+    /**
+     * 根据公钥数据，获取公钥对象
+     *
+     * @param publicData 公钥Base64编码数据
+     * @return 公钥对象
+     */
     public static PublicKey genPublicKey(String publicData) {
         byte[] decodeBase64 = JaBase64.decodeBase64(publicData);
         return getPublicKey(decodeBase64);
     }
 
 
+    /**
+     * 根据公钥字节数组获取公钥对象
+     *
+     * @param publicKeyData 公钥字节数组
+     * @return 公钥对象
+     */
     public static PublicKey getPublicKey(byte[] publicKeyData) {
         try {
             X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(publicKeyData);
@@ -64,16 +113,34 @@ public class RsaFactory {
     }
 
 
+    /**
+     * 根据私钥Base64字符串获取私钥对象
+     *
+     * @param privateKeyData Base64编码私钥
+     * @return 私钥对象
+     */
     public static PrivateKey getPrivateKey(String privateKeyData) {
         byte[] decodeBase64 = JaBase64.decodeBase64(privateKeyData);
         return getPrivateKey(decodeBase64);
     }
 
+    /**
+     * RSA私钥对象，获取私钥
+     *
+     * @param privateKey 私钥对象
+     * @return 私钥对象
+     */
     public static PrivateKey getPrivateKey(RSAPrivateKey privateKey) {
         Objects.requireNonNull(privateKey, "RSAPrivateKey Null");
         return getPrivateKey(privateKey.getEncoded());
     }
 
+    /**
+     * RSA私钥数组，获取私钥
+     *
+     * @param privateKeyData 私钥数组
+     * @return 私钥对象
+     */
     public static PrivateKey getPrivateKey(byte[] privateKeyData) {
         Objects.requireNonNull(privateKeyData, "PrivateKeyData Null");
         try {
@@ -85,6 +152,11 @@ public class RsaFactory {
         }
     }
 
+    /**
+     * 密钥工厂
+     *
+     * @return 密钥工厂对象
+     */
     private static KeyFactory getKeyFactoryInstance() {
         try {
             return KeyFactory.getInstance(ALGORITHM_RSA);

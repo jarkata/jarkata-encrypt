@@ -32,12 +32,24 @@ public class Sm4Factory {
     }
 
 
+    /**
+     * 生成密钥字符串
+     *
+     * @param seeds
+     * @return
+     */
     public static String generateKey(String seeds) {
         SecretKeySpec secretKeySpec = genSecretKeySpec(seeds);
         byte[] specEncoded = secretKeySpec.getEncoded();
         return JaHex.encodeHex(specEncoded);
     }
 
+    /**
+     * 生成密钥对象
+     *
+     * @param seeds
+     * @return
+     */
     public static SecretKeySpec genSecretKeySpec(String seeds) {
         if (StringUtils.isBlank(seeds)) {
             throw new IllegalArgumentException("Seeds Blank");
@@ -57,8 +69,8 @@ public class Sm4Factory {
     /**
      * 加密（ECB模式）
      *
-     * @param keyHex    秘钥HEX字符串
-     * @param plainText 明文字符串
+     * @param secretKeySpec 秘钥对象
+     * @param plainText     明文字符串
      * @return 加密后的HEX字符串
      */
     public static byte[] simpleEncrypt(SecretKeySpec secretKeySpec, String plainText) {
@@ -75,8 +87,8 @@ public class Sm4Factory {
     /**
      * 解密（ECB模式）
      *
-     * @param keyHex        秘钥HEX字符串
-     * @param cipherDataHex 密文的HEX字符串
+     * @param secretKeySpec 秘钥secretKeySpec
+     * @param encrypt 密文的HEX字符串
      * @return 解密后的明文
      */
     public static byte[] simpleDecrypt(SecretKeySpec secretKeySpec, byte[] encrypt) {

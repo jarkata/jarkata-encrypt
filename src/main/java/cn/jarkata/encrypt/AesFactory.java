@@ -57,6 +57,13 @@ public class AesFactory {
         }
     }
 
+    /**
+     * 解密数据
+     *
+     * @param secretKeySpec 密钥对象
+     * @param plainText     明文数据
+     * @return 加密值
+     */
     public static byte[] simpleEncrypt(SecretKeySpec secretKeySpec, String plainText) {
         if (StringUtils.isBlank(plainText)) {
             throw new IllegalArgumentException("PlainText Blank");
@@ -74,6 +81,13 @@ public class AesFactory {
         }
     }
 
+    /**
+     * 解密
+     *
+     * @param secretKeySpec 密钥
+     * @param encrypt       加密数据
+     * @return 解密数据
+     */
     public static byte[] simpleDecrypt(SecretKeySpec secretKeySpec, byte[] encrypt) {
         if (Objects.isNull(encrypt) || encrypt.length == 0) {
             throw new IllegalArgumentException("EncryptText Blank");

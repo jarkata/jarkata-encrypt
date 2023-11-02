@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class AesFactoryTest {
 
@@ -45,12 +42,5 @@ public class AesFactoryTest {
         System.out.println("解密后的数据：" + decrypt);
     }
 
-    @Test
-    public void encrypt3() throws Exception {
-        byte[] allBytes = Files.readAllBytes(Paths.get("/Users/data/lira/lira-server.jar"));
-        byte[] encrypt = AesFactory.simpleEncrypt("1234567812345678", allBytes);
-        System.out.println(encrypt.length);
-        byte[] decrypt = AesFactory.simpleDecrypt("1234567812345678", encrypt);
-        Files.write(Paths.get("/Users/data/code/lira-server.jar"), decrypt, StandardOpenOption.TRUNCATE_EXISTING);
-    }
+
 }
